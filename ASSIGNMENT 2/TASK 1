@@ -1,0 +1,50 @@
+import java.util.Locale;
+public class RailwayTicketBenchmark {
+    static String buildWithString(int fields) {
+        String ticket = "";
+        for (int i = 1; i <= fields; i++) {
+            ticket = ticket + "Field" + i + ":Value" + i + "\n";
+        }
+        return ticket;
+    }
+
+    static String buildWithStringBuilder(int fields) {
+        StringBuilder ticket = new StringBuilder();
+        for (int i = 1; i <= fields; i++) {
+            ticket.append("Field").append(i).append(":Value").append(i).append('\n');
+        }
+        return ticket.toString();
+    }
+
+    static String buildWithStringBuffer(int fields) {
+        StringBuffer ticket = new StringBuffer();
+        for (int i = 1; i <= fields; i++) {
+            ticket.append("Field").append(i).append(":Value").append(i).append('\n');
+        }
+        return ticket.toString();
+    }
+
+    static long measure(Runnable task, int repetitions) {
+        long start = System.nanoTime();
+        for (int i = 0; i < repetitions; i++) task.run();
+        return (System.nanoTime() - start) / repetitions;
+    }
+
+    public static void main(String[] args) {
+        int[] workloads = {5, 50, 500};
+        System.out.println("Q1 - Ticket text building benchmark");
+        for (int fields : workloads) {
+            int repetitions = fields == 500 ? 100 : 1000;
+            long stringTime = measure(() -> buildWithString(fields), repetitions);
+            long builderTime = measure(() -> buildWithStringBuilder(fields), repetitions);
+            long bufferTime = measure(() -> buildWithStringBuffer(fields), repetitions);
+
+            System.out.println("\nFields per ticket: " + fields);
+            System.out.printf(Locale.US, "String (+)        : %d ns%n", stringTime);
+            System.out.printf(Locale.US, "StringBuilder     : %d ns%n", builderTime);
+            System.out.printf(Locale.US, "StringBuffer      : %d ns%n", bufferTime);
+        }
+        System.out.println("\nConclusion: StringBuilder is generally suitable for local ticket creation.");
+        System.out.println("StringBuffer is synchronized and can be used when one shared mutable buffer is required.");
+    }
+}
