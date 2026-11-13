@@ -1,0 +1,47 @@
+public class RedesignBenchmark {
+    static String original(int count) {
+        String result = "";
+        for (int i = 0; i < count; i++) {
+            result = result + "Patient-" + i + "\n";
+        }
+        return result;
+    }
+
+    static String redesigned(int count) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            result.append("Patient-").append(i).append('\n');
+        }
+        return result.toString();
+    }
+
+    static long measureOriginal(int count, int repetitions) {
+        long start = System.nanoTime();
+        for (int i = 0; i < repetitions; i++) original(count);
+        return (System.nanoTime() - start) / repetitions;
+    }
+
+    static long measureRedesigned(int count, int repetitions) {
+        long start = System.nanoTime();
+        for (int i = 0; i < repetitions; i++) redesigned(count);
+        return (System.nanoTime() - start) / repetitions;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Q7 - Original and redesigned text generation");
+        for (int count : new int[]{100, 1000, 3000}) {
+            int repetitions = count == 3000 ? 10 : 50;
+            long oldTime = measureOriginal(count, repetitions);
+            long newTime = measureRedesigned(count, repetitions);
+
+            System.out.println("\nRecords: " + count);
+            System.out.println("Original String concatenation: " + oldTime + " ns");
+            System.out.println("Redesigned StringBuilder:      " + newTime + " ns");
+        }
+
+        String oldResult = original(5);
+        String newResult = redesigned(5);
+        System.out.println("\nSame output: " + oldResult.equals(newResult));
+        System.out.println("Redesign uses StringBuilder to reduce repeated intermediate String creation.");
+    }
+}
