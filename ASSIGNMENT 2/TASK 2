@@ -1,0 +1,66 @@
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+
+public class PlaylistManager {
+    static void testLists(int size) {
+        List<Integer> arrayList = new ArrayList<>();
+        List<Integer> linkedList = new LinkedList<>();
+
+        long start = System.nanoTime();
+        for (int i = 0; i < size; i++) arrayList.add(i);
+        long arrayAdd = System.nanoTime() - start;
+
+        start = System.nanoTime();
+        for (int i = 0; i < size; i++) linkedList.add(i);
+        long linkedAdd = System.nanoTime() - start;
+
+        int middle = size / 2;
+        start = System.nanoTime();
+        arrayList.add(middle, -1);
+        long arrayInsert = System.nanoTime() - start;
+
+        start = System.nanoTime();
+        linkedList.add(middle, -1);
+        long linkedInsert = System.nanoTime() - start;
+
+        start = System.nanoTime();
+        int a = arrayList.get(middle);
+        long arrayGet = System.nanoTime() - start;
+
+        start = System.nanoTime();
+        int b = linkedList.get(middle);
+        long linkedGet = System.nanoTime() - start;
+
+        long sumA = 0, sumL = 0;
+        start = System.nanoTime();
+        for (int value : arrayList) sumA += value;
+        long arrayIterate = System.nanoTime() - start;
+
+        start = System.nanoTime();
+        for (int value : linkedList) sumL += value;
+        long linkedIterate = System.nanoTime() - start;
+
+        System.out.println("\nList size: " + size);
+        System.out.println("Add at end - ArrayList: " + arrayAdd + " ns, LinkedList: " + linkedAdd + " ns");
+        System.out.println("Insert middle - ArrayList: " + arrayInsert + " ns, LinkedList: " + linkedInsert + " ns");
+        System.out.println("Get middle - ArrayList: " + arrayGet + " ns, LinkedList: " + linkedGet + " ns");
+        System.out.println("Iteration - ArrayList: " + arrayIterate + " ns, LinkedList: " + linkedIterate + " ns");
+        System.out.println("Check values: " + a + ", " + b + " | sums: " + sumA + ", " + sumL);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Q2 - ArrayList and LinkedList comparison");
+        for (int size : new int[]{1000, 5000, 10000}) testLists(size);
+
+        Deque<String> upNext = new ArrayDeque<>();
+        upNext.addFirst("Song B");
+        upNext.addLast("Song C");
+        upNext.addFirst("Song A");
+        System.out.println("\nArrayDeque Up Next queue:");
+        System.out.println("Next song: " + upNext.removeFirst());
+        System.out.println("Remaining songs: " + upNext);
+    }
+}
