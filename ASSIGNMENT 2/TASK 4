@@ -1,0 +1,63 @@
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class Main {
+
+    static Map<String, Integer> createInventory(
+            Map<String, Integer> map, int count) {
+
+        for (int i = count; i >= 1; i--) {
+            map.put(String.format("MED%05d", i), i * 10);
+        }
+        return map;
+    }
+
+    static long lookupTime(Map<String, Integer> map, int count) {
+        long start = System.nanoTime();
+
+        for (int i = 1; i <= 100000; i++) {
+            map.get(String.format("MED%05d", (i % count) + 1));
+        }
+
+        return System.nanoTime() - start;
+    }
+
+    public static void main(String[] args) {
+
+        System.out.println("Q4 - Pharmacy inventory map comparison");
+
+        for (int count : new int[]{1000, 5000, 10000}) {
+
+            Map<String, Integer> hash =
+                    createInventory(new HashMap<>(), count);
+
+            Map<String, Integer> tree =
+                    createInventory(new TreeMap<>(), count);
+
+            Map<String, Integer> linked =
+                    createInventory(new LinkedHashMap<>(), count);
+
+            System.out.println("\nNumber of medicines: " + count);
+
+            System.out.println("HashMap 100,000 lookup time: "
+                    + lookupTime(hash, count) + " ns");
+
+            System.out.println("TreeMap 100,000 lookup time: "
+                    + lookupTime(tree, count) + " ns");
+
+            System.out.println("LinkedHashMap 100,000 lookup time: "
+                    + lookupTime(linked, count) + " ns");
+
+            System.out.println("TreeMap code-order sample: "
+                    + tree.keySet().stream().limit(5).toList());
+
+            System.out.println("LinkedHashMap insertion-order sample: "
+                    + linked.keySet().stream().limit(5).toList());
+        }
+
+        System.out.println("\nHashMap: fast average lookup; TreeMap: sorted key order.");
+        System.out.println("LinkedHashMap: preserves insertion order.");
+    }
+}
