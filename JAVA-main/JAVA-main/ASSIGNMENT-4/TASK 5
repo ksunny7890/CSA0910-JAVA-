@@ -1,0 +1,104 @@
+package Task05;
+
+import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+/**
+ * Task 5 - Same Screen, Different Event-Handling Styles
+ * Complete the Code: Converter.java (Lambda Style)
+ * Student: Moksha Dude (192372374)
+ */
+public class Converter extends JFrame {
+    private final JTextField amount = new JTextField(10);
+    private final JComboBox<String> target =
+            new JComboBox<>(new String[]{"USD", "EUR"});
+    private final JLabel result = new JLabel(" ");
+
+    private static double rate(String currency) {
+        return currency.equals("USD") ? 0.012 : 0.011;
+    }
+
+    public Converter() {
+        super("Currency Converter");
+        setLayout(new FlowLayout());
+        JButton convertButton = new JButton("Convert");
+        add(new JLabel("INR"));
+        add(amount);
+        add(target);
+        add(convertButton);
+        add(result);
+
+        // TODO 1: Register ONE lambda listener for both the Convert button and the
+        //   Enter key in the amount field
+        ActionListener listener = e -> convert();
+        convertButton.addActionListener(listener);
+        amount.addActionListener(listener);
+
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        pack();
+        setLocationRelativeTo(null);
+    }
+
+    private void convert() {
+        // TODO 2: Parse the amount and show the converted value with 2 decimals, or
+        //   "Invalid amount" if parsing fails
+        try {
+            double val = Double.parseDouble(amount.getText().trim());
+            String selectedTarget = (String) target.getSelectedItem();
+            double converted = val * rate(selectedTarget);
+            result.setText(String.format("%.2f %s", converted, selectedTarget));
+        } catch (NumberFormatException e) {
+            result.setText("Invalid amount");
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new Converter().setVisible(true));
+    }
+}
+
+package Task05;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+/**
+ * Task 5 - Comparative Evaluation of 4 Event-Handling Styles:
+ * Style A: Container Implements ActionListener
+ * Style B: Named Inner Class
+ * Style C: Anonymous Inner Class
+ * Style D: Lambda Expression (Single Abstract Method)
+ */
+public class ConverterStylesDemo {
+
+    // Style B: Named Inner Class
+    static class NamedConversionHandler implements ActionListener {
+        private final Runnable action;
+        NamedConversionHandler(Runnable action) { this.action = action; }
+        @Override
+        public void actionPerformed(ActionEvent e) { action.run(); }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=== Task 5: Evaluation of 4 Event-Handling Styles ===");
+        System.out.println("1. Style A (Frame implements ActionListener):");
+        System.out.println("   - Coupling: Tight. Single actionPerformed method must use if-else chains on e.getSource().");
+        System.out.println("   - Maintenance: Fragile as component count scales.");
+        System.out.println("2. Style B (Named Inner Class):");
+        System.out.println("   - Scope: Clean separation, reusable across multiple buttons/menus within same container.");
+        System.out.println("   - Overhead: Moderate boilerplate.");
+        System.out.println("3. Style C (Anonymous Inner Class):");
+        System.out.println("   - Scope: Local to registration site.");
+        System.out.println("   - Overhead: Generates separate .class file at compile-time (e.g. Converter$1.class).");
+        System.out.println("4. Style D (Lambda Expression):");
+        System.out.println("   - Conciseness: Highest readability. Leverages invokedynamic without extra class file overhead.");
+        System.out.println("   - Best Practice: Ideal for modern Java UI development.");
+    }
+}
